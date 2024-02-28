@@ -1,0 +1,12 @@
+[package]
+name = "tex-rust"
+version = "0.1.0"
+edition = "2021"
+authors = ["A. Russon"]
+description = "TeX in Rust"
+license = "MIT"
+
+[features]
+default = []
+debug = []
+stat = []
