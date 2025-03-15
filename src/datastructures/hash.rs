@@ -33,35 +33,29 @@ impl IndexMut<usize> for Hash {
     }
 }
 
-#[macro_export]
-macro_rules! hash {
-    ($p:expr) => {
-        unsafe { HASH[$p] }
-    };
+pub(crate) fn hash(p: usize) -> MemoryWord {
+    unsafe { HASH[p] }
 }
 
-#[macro_export]
-macro_rules! hash_mut {
-    ($p:expr) => {
-        unsafe { &mut HASH[$p] }
-    };
+pub(crate) fn hash_mut(p: usize) -> &'static mut MemoryWord {
+    unsafe { &mut HASH[p] }
 }
 
 // Section 256
 fn next(p: HalfWord) -> HalfWord {
-    hash![p as usize].hh_lh()
+    hash(p as usize).hh_lh()
 }
 
 pub(crate) fn next_mut(p: HalfWord) -> &'static mut HalfWord {
-    hash_mut![p as usize].hh_lh_mut()
+    hash_mut(p as usize).hh_lh_mut()
 }
 
 pub(crate) fn text(p: HalfWord) -> HalfWord {
-    hash![p as usize].hh_rh()
+    hash(p as usize).hh_rh()
 }
 
 pub(crate) fn text_mut(p: HalfWord) -> &'static mut HalfWord {
-    hash_mut![p as usize].hh_rh_mut()
+    hash_mut(p as usize).hh_rh_mut()
 }
 
 impl Global {

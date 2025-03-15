@@ -44,7 +44,7 @@ pub(crate) use equivalent::{
 pub(crate) use equivalent::{tracing_restores, tracing_stats, tracing_paragraphs, tracing_pages};
 
 pub(crate) use hash::{
-    HASH, text, font_id_text, font_id_text_mut, next_mut, text_mut
+    hash, hash_mut, text, font_id_text, font_id_text_mut, next_mut, text_mut
 };
 
 pub(crate) use memory::{

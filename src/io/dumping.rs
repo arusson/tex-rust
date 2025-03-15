@@ -1,7 +1,7 @@
 use crate::constants::*;
 use crate::datastructures::{
-    eqtb, eqtb_mut, HASH, mem, mem_mut, MemoryWord, day, eq_level, eq_type, equiv, font_id_text,
-    link, month, node_size, rlink, text, tracing_stats_mut, year
+    eqtb, eqtb_mut, hash, hash_mut, mem, mem_mut, MemoryWord, day, eq_level, eq_type, equiv,
+    font_id_text, link, month, node_size, rlink, text, tracing_stats_mut, year
 };
 use crate::error::{TeXError, TeXResult};
 use crate::io::{ByteFileInSelector, ByteFileOutSelector};
@@ -10,8 +10,7 @@ use crate::strings::{
     pool_ptr_set, str_ptr, str_ptr_set, str_room, str_start, str_start_mut
 };
 use crate::{
-    Global, Integer, QuarterWord, StrNum, hash, hash_mut,
-    str_pool, str_pool_mut
+    Global, Integer, QuarterWord, StrNum, str_pool, str_pool_mut
 };
 
 // Part 50: Dumping and undumping the tables
@@ -285,12 +284,12 @@ impl Global {
         for p in HASH_BASE..=self.hash_used {
             if text(p) != 0 {
                 dump_int!(p);
-                dump_wd!(hash![p as usize]);
+                dump_wd!(hash(p as usize));
                 self.cs_count += 1;
             }
         }
         for p in (self.hash_used + 1)..UNDEFINED_CONTROL_SEQUENCE {
-            dump_wd!(hash![p as usize]);
+            dump_wd!(hash(p as usize));
         }
         dump_int!(self.cs_count);
         self.print_ln();
@@ -582,13 +581,13 @@ impl Global {
             p = HASH_BASE - 1;
             loop {
                 p = undump!(p + 1, self.hash_used);
-                *hash_mut![p as usize] = undump_wd!();
+                *hash_mut(p as usize) = undump_wd!();
                 if p == self.hash_used {
                     break;
                 }
             }
             for p in (self.hash_used + 1)..UNDEFINED_CONTROL_SEQUENCE {
-                *hash_mut![p as usize] = undump_wd!();
+                *hash_mut(p as usize) = undump_wd!();
             }
             self.cs_count = undump_int!();
             // End section 1319

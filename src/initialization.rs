@@ -3,7 +3,7 @@ use crate::breaker::{
 };
 use crate::constants::*;
 use crate::datastructures::{
-    eqtb, eqtb_mut, HASH, MEM, XEQ_LEVEL, InStateRecord, InputFile, LineStack,
+    eqtb, eqtb_mut, hash, hash_mut, MEM, XEQ_LEVEL, InStateRecord, InputFile, LineStack,
     ListStateRecord, MemoryWord, Status, box_mut, cat_code_mut, cur_font_mut,
     day_mut, del_code_mut, end_line_char_mut, eq_level_mut, eq_type_mut,
     equiv_mut, escape_char_mut, glue_ref_count_mut, hang_after_mut, info_mut,
@@ -20,8 +20,7 @@ use crate::io::{
 use crate::parser::{TrieOpHash, TrieTaken};
 use crate::strings::str_ptr;
 use crate::{
-    Global, HalfWord, Integer, QuarterWord, SmallNumber,
-    hash, hash_mut, hi, page_depth, update_terminal
+    Global, HalfWord, Integer, QuarterWord, SmallNumber, hi, page_depth, update_terminal
 };
 
 use std::io::Write;
@@ -889,7 +888,7 @@ impl Global {
         *next_mut(HASH_BASE) = 0;
         *text_mut(HASH_BASE) = 0;
         for k in (HASH_BASE + 1)..UNDEFINED_CONTROL_SEQUENCE {
-            *hash_mut![k as usize] = hash![HASH_BASE as usize];
+            *hash_mut(k as usize) = hash(HASH_BASE as usize);
         }
 
         // Section 272
