@@ -1,17 +1,17 @@
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, HASH, MEM, MemoryWord, day, eq_level, eq_type, equiv, font_id_text,
+    EQTB, HASH, mem, mem_mut, MemoryWord, day, eq_level, eq_type, equiv, font_id_text,
     link, month, node_size, rlink, text, tracing_stats_mut, year
 };
 use crate::error::{TeXError, TeXResult};
 use crate::io::{ByteFileInSelector, ByteFileOutSelector};
 use crate::strings::{
-    POOL, init_pool_ptr_mut, init_str_ptr_mut, make_string, pool_ptr,
-    pool_ptr_mut, str_ptr, str_ptr_mut, str_room, str_start, str_start_mut
+    POOL, init_pool_ptr_set, init_str_ptr_set, make_string, pool_ptr,
+    pool_ptr_set, str_ptr, str_ptr_set, str_room, str_start, str_start_mut
 };
 use crate::{
     Global, Integer, QuarterWord, StrNum, eqtb, eqtb_mut, hash, hash_mut,
-    mem, mem_mut, str_pool, str_pool_mut
+    str_pool, str_pool_mut
 };
 
 // Part 50: Dumping and undumping the tables
@@ -149,7 +149,7 @@ impl Global {
         let mut x = 0;
         loop {
             for k in p..=(q + 1) {
-                dump_wd!(mem![k as usize]);
+                dump_wd!(mem(k as usize));
             }
             x += q + 2 - p;
             self.var_used += q - p;
@@ -162,13 +162,13 @@ impl Global {
         self.var_used += self.lo_mem_max - p;
         self.dyn_used = self.mem_end + 1 - self.hi_mem_min;
         for k in p..=self.lo_mem_max {
-            dump_wd!(mem![k as usize]);
+            dump_wd!(mem(k as usize));
         }
         x += self.lo_mem_max + 1 - p;
         dump_int!(self.hi_mem_min);
         dump_int!(self.avail);
         for k in self.hi_mem_min..=self.mem_end {
-            dump_wd!(mem![k as usize]);
+            dump_wd!(mem(k as usize));
         }
         x += self.mem_end + 1 - self.hi_mem_min;
         p = self.avail;
@@ -483,8 +483,8 @@ impl Global {
             // End section 1308
 
             // Section 1310
-            *pool_ptr_mut() = undump_size!(0, POOL_SIZE, "string pool size") as usize;
-            *str_ptr_mut() = undump_size!(0, MAX_STRINGS, "max strings") as usize;
+            pool_ptr_set(undump_size!(0, POOL_SIZE, "string pool size") as usize);
+            str_ptr_set(undump_size!(0, MAX_STRINGS, "max strings") as usize);
             for k in 0..=str_ptr() {
                 *str_start_mut(k) = undump!(0, pool_ptr() as Integer) as usize;
             }
@@ -510,8 +510,8 @@ impl Global {
             }
             k = pool_ptr() - 4;
             undump_four_ASCII!();
-            *init_str_ptr_mut() = str_ptr();
-            *init_pool_ptr_mut() = pool_ptr();
+            init_str_ptr_set(str_ptr());
+            init_pool_ptr_set(pool_ptr());
             // End section 1310
 
             // Section 1312
@@ -521,7 +521,7 @@ impl Global {
             let mut q = self.rover;
             loop {
                 for k in p..=(q + 1) {
-                    *mem_mut![k as usize] = undump_wd!();
+                    *mem_mut(k as usize) = undump_wd!();
                 }
                 p = q + node_size(q);
                 if p > self.lo_mem_max || (q >= rlink(q) && rlink(q) != self.rover) {
@@ -533,14 +533,14 @@ impl Global {
                 }
             }
             for k in p..=self.lo_mem_max {
-                *mem_mut![k as usize] = undump_wd!();
+                *mem_mut(k as usize) = undump_wd!();
             }
             // This is never true: if MEM_MIN < MEM_BOT - 2
             self.hi_mem_min = undump!(self.lo_mem_max + 1, HI_MEM_STAT_MIN);
             self.avail = undump!(NULL, MEM_TOP);
             self.mem_end = MEM_TOP;
             for k in self.hi_mem_min..=self.mem_end {
-                *mem_mut![k as usize] = undump_wd!();
+                *mem_mut(k as usize) = undump_wd!();
             }
             self.var_used = undump_int!();
             self.dyn_used = undump_int!();

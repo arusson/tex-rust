@@ -2,12 +2,12 @@ use crate::constants::{
     CHOICE_NODE, NOAD_SIZE, NORMAL, NULL, ORD_NOAD, STYLE_NODE, STYLE_NODE_SIZE
 };
 use crate::datastructures::{
-    MEM, depth_mut, font, font_mut, info, info_mut, link, link_mut,
+    mem, mem_mut, depth_mut, font, font_mut, info, info_mut, link, link_mut,
     subtype_mut, type_mut, width, width_mut
 };
 use crate::error::TeXResult;
 use crate::{
-    Global, HalfWord, QuarterWord, Scaled, SmallNumber, mem, mem_mut
+    Global, HalfWord, QuarterWord, Scaled, SmallNumber
 };
 
 // Part 34: Data structures for math mode
@@ -82,35 +82,35 @@ macro_rules! denominator {
 
 // Section 683
 pub(crate) fn small_fam(p: HalfWord) -> QuarterWord {
-    mem![p as usize].qqqq_b0()
+    mem(p as usize).qqqq_b0()
 }
 
 pub(crate) fn small_fam_mut(p: HalfWord) -> &'static mut QuarterWord {
-    mem_mut![p as usize].qqqq_b0_mut()
+    mem_mut(p as usize).qqqq_b0_mut()
 }
 
 pub(crate) fn small_char(p: HalfWord) -> QuarterWord {
-    mem![p as usize].qqqq_b1()
+    mem(p as usize).qqqq_b1()
 }
 
 pub(crate) fn small_char_mut(p: HalfWord) -> &'static mut QuarterWord {
-    mem_mut![p as usize].qqqq_b1_mut()
+    mem_mut(p as usize).qqqq_b1_mut()
 }
 
 pub(crate) fn large_fam(p: HalfWord) -> QuarterWord {
-    mem![p as usize].qqqq_b2()
+    mem(p as usize).qqqq_b2()
 }
 
 pub(crate) fn large_fam_mut(p: HalfWord) -> &'static mut QuarterWord {
-    mem_mut![p as usize].qqqq_b2_mut()
+    mem_mut(p as usize).qqqq_b2_mut()
 }
 
 pub(crate) fn large_char(p: HalfWord) -> QuarterWord {
-    mem![p as usize].qqqq_b3()
+    mem(p as usize).qqqq_b3()
 }
 
 pub(crate) fn large_char_mut(p: HalfWord) -> &'static mut QuarterWord {
-    mem_mut![p as usize].qqqq_b3_mut()
+    mem_mut(p as usize).qqqq_b3_mut()
 }
 
 pub(crate) fn thickness(p: HalfWord) -> Scaled {
@@ -182,9 +182,9 @@ impl Global {
         let p = self.get_node(NOAD_SIZE)?;
         *type_mut(p) = ORD_NOAD;
         *subtype_mut(p) = NORMAL;
-        *mem_mut![nucleus!(p) as usize] = self.empty_field;
-        *mem_mut![subscr!(p) as usize] = self.empty_field;
-        *mem_mut![supscr!(p) as usize] = self.empty_field;
+        *mem_mut(nucleus!(p) as usize) = self.empty_field;
+        *mem_mut(subscr!(p) as usize) = self.empty_field;
+        *mem_mut(supscr!(p) as usize) = self.empty_field;
         Ok(p)
     }
 

@@ -1,7 +1,7 @@
 use crate::arithmetic::x_over_n;
 use crate::constants::*;
 use crate::datastructures::{
-    MEM, bin_op_penalty, character, character_mut, delimiter_factor,
+    mem, mem_mut, bin_op_penalty, character, character_mut, delimiter_factor,
     delimiter_shortfall, depth, depth_mut, fam_fnt, glue_par, glue_ptr,
     glue_ptr_mut, glue_ref_count_mut, height, height_mut, info, info_mut, link, link_mut, list_ptr, list_ptr_mut, rel_penalty, script_space, shift_amount,
     shift_amount_mut, subtype, subtype_mut, r#type, type_mut, width, width_mut
@@ -17,7 +17,7 @@ use crate::math::{
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Scaled, SmallNumber, accent_chr,
     cramped_style, delimiter, denom_style, denominator, half, hpack,
-    left_delimiter, mem, mem_mut, nucleus, num_style, numerator, odd,
+    left_delimiter, nucleus, num_style, numerator, odd,
     right_delimiter, sec703_set_up_values, sub_style, subscr, sup_style,
     supscr, vpack
 };
@@ -31,7 +31,7 @@ impl Global {
             match math_type(p) {
                 MATH_CHAR => {
                     self.cur_mlist = self.new_noad()?;
-                    *mem_mut![nucleus!(self.cur_mlist) as usize] = mem![p as usize];
+                    *mem_mut(nucleus!(self.cur_mlist) as usize) = mem(p as usize);
                 },
 
                 SUB_BOX => break 'block info(p), // Goto found
@@ -102,11 +102,11 @@ impl Global {
 
 // Section 725
 fn new_hlist(p: HalfWord) -> Integer {
-    mem![nucleus!(p) as usize].int()
+    mem(nucleus!(p) as usize).int()
 }
 
 fn new_hlist_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![nucleus!(p) as usize].int_mut()
+    mem_mut(nucleus!(p) as usize).int_mut()
 }
 
 enum Sec727Goto {
@@ -505,11 +505,11 @@ impl Global {
                 // Section 742
                 self.flush_node_list(x)?;
                 x = self.new_noad()?;
-                *mem_mut![nucleus!(x) as usize] = mem![nucleus!(q) as usize];
-                *mem_mut![supscr!(x) as usize] = mem![supscr!(q) as usize];
-                *mem_mut![subscr!(x) as usize] = mem![subscr!(q) as usize];
-                *mem_mut![supscr!(q) as usize] = self.empty_field;
-                *mem_mut![subscr!(q) as usize] = self.empty_field;
+                *mem_mut(nucleus!(x) as usize) = mem(nucleus!(q) as usize);
+                *mem_mut(supscr!(x) as usize) = mem(supscr!(q) as usize);
+                *mem_mut(subscr!(x) as usize) = mem(subscr!(q) as usize);
+                *mem_mut(supscr!(q) as usize) = self.empty_field;
+                *mem_mut(subscr!(q) as usize) = self.empty_field;
                 *math_type_mut(nucleus!(q)) = SUB_MLIST;
                 *info_mut(nucleus!(q)) = x;
                 x = self.clean_box(nucleus!(q), self.cur_style)?;
@@ -826,8 +826,8 @@ impl Global {
                     _ => {
                         *link_mut(q) = link(p);
                         *character_mut(nucleus!(q)) = self.cur_i.rem_byte();
-                        *mem_mut![subscr!(q) as usize] = mem![subscr!(p) as usize];
-                        *mem_mut![supscr!(q) as usize] = mem![supscr!(p) as usize];
+                        *mem_mut(subscr!(q) as usize) = mem(subscr!(p) as usize);
+                        *mem_mut(supscr!(q) as usize) = mem(supscr!(p) as usize);
                         self.free_node(p, NOAD_SIZE);
                     }
                 }

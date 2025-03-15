@@ -3,7 +3,7 @@ use tex_rust::{
     datastructures::end_line_char,
     initialization::fix_date_and_time,
     strings::{
-        get_strings_started, init_pool_ptr_mut, init_str_ptr_mut,
+        get_strings_started, init_pool_ptr_set, init_str_ptr_set,
         pool_ptr, str_ptr
     },
     Global, Integer, end_line_char_inactive
@@ -116,8 +116,8 @@ fn main() {
     if global.initex_mode {
         manage_error!(get_strings_started());    
         manage_error!(global.init_prim());
-        *init_str_ptr_mut() = str_ptr();
-        *init_pool_ptr_mut() = pool_ptr();
+        init_str_ptr_set(str_ptr());
+        init_pool_ptr_set(pool_ptr());
         fix_date_and_time();
     }
 

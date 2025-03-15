@@ -1,31 +1,30 @@
 use crate::constants::*;
 use crate::datastructures::{
-    MEM, glue_par, info, info_mut, link, link_mut, llink, llink_mut,
+    mem, mem_mut, glue_par, info, info_mut, link, link_mut, llink, llink_mut,
     rlink, rlink_mut
 };
 use crate::error::TeXResult;
 use crate::{
-    Global, GlueRatio, HalfWord, Integer, QuarterWord, Scaled, SmallNumber,
-    mem, mem_mut
+    Global, GlueRatio, HalfWord, Integer, QuarterWord, Scaled, SmallNumber
 };
 
 // Part 10: Data structures for boxes and their friends
 
 // Section 133
 pub(crate) fn r#type(p: HalfWord) -> QuarterWord {
-    mem![p as usize].qqqq_b0()
+    mem(p as usize).qqqq_b0()
 }
 
 pub(crate) fn type_mut(p: HalfWord) -> &'static mut QuarterWord {
-    mem_mut![p as usize].qqqq_b0_mut()
+    mem_mut(p as usize).qqqq_b0_mut()
 }
 
 pub(crate) fn subtype(p: HalfWord) -> QuarterWord {
-    mem![p as usize].qqqq_b1()
+    mem(p as usize).qqqq_b1()
 }
 
 pub(crate) fn subtype_mut(p: HalfWord) -> &'static mut QuarterWord {
-    mem_mut![p as usize].qqqq_b1_mut()
+    mem_mut(p as usize).qqqq_b1_mut()
 }
 
 // Section 134
@@ -53,35 +52,35 @@ pub(crate) fn character_mut(p: HalfWord) -> &'static mut QuarterWord {
 
 // Section 135
 pub(crate) fn width(p: HalfWord) -> Scaled {
-    mem![(p + WIDTH_OFFSET) as usize].sc()
+    mem((p + WIDTH_OFFSET) as usize).sc()
 }
 
 pub(crate) fn width_mut(p: HalfWord) -> &'static mut Scaled {
-    mem_mut![(p + WIDTH_OFFSET) as usize].sc_mut()
+    mem_mut((p + WIDTH_OFFSET) as usize).sc_mut()
 }
 
 pub(crate) fn depth(p: HalfWord) -> Scaled {
-    mem![(p + DEPTH_OFFSET) as usize].sc()
+    mem((p + DEPTH_OFFSET) as usize).sc()
 }
 
 pub(crate) fn depth_mut(p: HalfWord) -> &'static mut Scaled {
-    mem_mut![(p + DEPTH_OFFSET) as usize].sc_mut()
+    mem_mut((p + DEPTH_OFFSET) as usize).sc_mut()
 }
 
 pub(crate) fn height(p: HalfWord) -> Scaled {
-    mem![(p + HEIGHT_OFFSET) as usize].sc()
+    mem((p + HEIGHT_OFFSET) as usize).sc()
 }
 
 pub(crate) fn height_mut(p: HalfWord) -> &'static mut Scaled {
-    mem_mut![(p + HEIGHT_OFFSET) as usize].sc_mut()
+    mem_mut((p + HEIGHT_OFFSET) as usize).sc_mut()
 }
 
 pub(crate) fn shift_amount(p: HalfWord) -> Scaled {
-    mem![p as usize + 4].sc()
+    mem(p as usize + 4).sc()
 }
 
 pub(crate) fn shift_amount_mut(p: HalfWord) -> &'static mut Scaled {
-    mem_mut![p as usize + 4].sc_mut()
+    mem_mut(p as usize + 4).sc_mut()
 }
 
 pub(crate) fn list_ptr(p: HalfWord) -> HalfWord {
@@ -109,11 +108,11 @@ pub(crate) fn glue_sign_mut(p: HalfWord) -> &'static mut QuarterWord {
 }
 
 pub(crate) fn glue_set(p: HalfWord) -> GlueRatio {
-    mem![(p + GLUE_OFFSET) as usize].gr()
+    mem((p + GLUE_OFFSET) as usize).gr()
 }
 
 pub(crate) fn glue_set_mut(p: HalfWord) -> &'static mut GlueRatio {
-    mem_mut![(p + GLUE_OFFSET) as usize].gr_mut()
+    mem_mut((p + GLUE_OFFSET) as usize).gr_mut()
 }
 
 // Section 138
@@ -155,11 +154,11 @@ impl Global {
 
 // Section 140
 pub(crate) fn float_cost(p: HalfWord) -> Integer {
-    mem![(p + 1) as usize].int()
+    mem((p + 1) as usize).int()
 }
 
 pub(crate) fn float_cost_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + 1) as usize].int_mut()
+    mem_mut((p + 1) as usize).int_mut()
 }
 
 pub(crate) fn ins_ptr(p: HalfWord) -> HalfWord {
@@ -180,11 +179,11 @@ pub(crate) fn split_top_ptr_mut(p: HalfWord) -> &'static mut HalfWord {
 
 // Section 141
 pub(crate) fn mark_ptr(p: HalfWord) -> Integer {
-    mem![(p + 1) as usize].int()
+    mem((p + 1) as usize).int()
 }
 
 pub(crate) fn mark_ptr_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + 1) as usize].int_mut()
+    mem_mut((p + 1) as usize).int_mut()
 }
 
 // Section 142
@@ -320,19 +319,19 @@ pub(crate) fn glue_ref_count_mut(p: HalfWord) -> &'static mut HalfWord {
 }
 
 pub(crate) fn stretch( p: HalfWord) -> Scaled {
-    mem![(p + 2) as usize].sc()
+    mem((p + 2) as usize).sc()
 }
 
 pub(crate) fn stretch_mut(p: HalfWord) -> &'static mut Scaled {
-    mem_mut![(p + 2) as usize].sc_mut()
+    mem_mut((p + 2) as usize).sc_mut()
 }
 
 pub(crate) fn shrink(p: HalfWord) -> Scaled {
-    mem![(p + 3) as usize].sc()
+    mem((p + 3) as usize).sc()
 }
 
 pub(crate) fn shrink_mut(p: HalfWord) -> &'static mut Scaled {
-    mem_mut![(p + 3) as usize].sc_mut()
+    mem_mut((p + 3) as usize).sc_mut()
 }
 
 pub(crate) fn stretch_order(p: HalfWord) -> QuarterWord {
@@ -355,7 +354,7 @@ impl Global {
      // Section 151
      pub(crate) fn new_spec(&mut self, p: HalfWord) -> TeXResult<HalfWord> {
         let q = self.get_node(GLUE_SPEC_SIZE)?;
-        *mem_mut![q as usize] = mem![p as usize];
+        *mem_mut(q as usize) = mem(p as usize);
         *glue_ref_count_mut(q) = NULL;
         *width_mut(q) = width(p);
         *stretch_mut(q) = stretch(p);
@@ -407,11 +406,11 @@ impl Global {
 
 // Section 157
 pub(crate) fn penalty(p: HalfWord) -> Integer {
-    mem![(p + 1) as usize].int()
+    mem((p + 1) as usize).int()
 }
 
 pub(crate) fn penalty_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + 1) as usize].int_mut()
+    mem_mut((p + 1) as usize).int_mut()
 }
 
 impl Global {
@@ -427,11 +426,11 @@ impl Global {
 
 // Section 159
 pub(crate) fn glue_stretch(p: HalfWord) -> Scaled {
-    mem![(p + GLUE_OFFSET) as usize].sc()
+    mem((p + GLUE_OFFSET) as usize).sc()
 }
 
 pub(crate) fn glue_stretch_mut(p: HalfWord) -> &'static mut Scaled {
-    mem_mut![(p + GLUE_OFFSET) as usize].sc_mut()
+    mem_mut((p + GLUE_OFFSET) as usize).sc_mut()
 }
 
 pub(crate) fn glue_shrink(p: HalfWord) -> Scaled {

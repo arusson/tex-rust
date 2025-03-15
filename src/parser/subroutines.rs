@@ -1,7 +1,7 @@
 use crate::arithmetic::{mult_and_add, xn_over_d};
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, MEM, count, cur_font, depth_mut, dimen, equiv, glue_ptr,
+    EQTB, mem, count, cur_font, depth_mut, dimen, equiv, glue_ptr,
     glue_ref_count_mut, height_mut, info, info_mut, link, link_mut, mag,
     math_code, mu_skip, par_shape_ptr, penalty, r#box, r#type, shrink,
     shrink_mut, shrink_order_mut, skip, stretch, stretch_mut,
@@ -10,7 +10,7 @@ use crate::datastructures::{
 use crate::error::{TeXError, TeXResult};
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Scaled, SmallNumber,
-    add_glue_ref, back_list, eqtb, free_avail, ho, mem, nx_plus_y
+    add_glue_ref, back_list, eqtb, free_avail, ho, nx_plus_y
 };
 
 use std::cmp::Ordering::{Equal, Greater, Less};
@@ -224,7 +224,7 @@ impl Global {
                 self.scan_eight_bit_int()?;
                 self.cur_val = match r#box(self.cur_val) {
                     NULL => 0,
-                    _ => mem![(r#box(self.cur_val) + m) as usize].sc(),
+                    _ => mem((r#box(self.cur_val) + m) as usize).sc(),
                 };
                 self.cur_val_level = DIMEN_VAL;
                 // End section 420

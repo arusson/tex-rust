@@ -1,12 +1,12 @@
 use crate::constants::*;
 use crate::datastructures::{
-    MEM, Status, equiv, info, link, link_mut, r#box, r#type, subtype,
+    mem, mem_mut, Status, equiv, info, link, link_mut, r#box, r#type, subtype,
     subtype_mut, tracing_commands, type_mut
 };
 use crate::error::{TeXError, TeXResult};
 use crate::{
     Global, HalfWord, Integer, QuarterWord, SmallNumber,
-    mem, mem_mut, odd, sec406_get_next_nonblank_noncall_token
+    odd, sec406_get_next_nonblank_noncall_token
 };
 
 // Part 28: Conditional processing
@@ -20,11 +20,11 @@ enum Goto {
 
 // Section 489
 pub(crate) fn if_line_field(p: HalfWord) -> Integer {
-    mem![(p + 1) as usize].int()
+    mem((p + 1) as usize).int()
 }
 
 fn if_line_field_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + 1) as usize].int_mut()
+    mem_mut((p + 1) as usize).int_mut()
 }
 
 impl Global {

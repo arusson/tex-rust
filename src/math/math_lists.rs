@@ -1,7 +1,7 @@
 use crate::builder::norm_min;
 use crate::constants::*;
 use crate::datastructures::{
-    MEM, character, character_mut, cur_fam, cur_font, del_code, display_indent,
+    mem, mem_mut, character, character_mut, cur_fam, cur_font, del_code, display_indent,
     display_widow_penalty, display_width, eq_type, equiv, every_display,
     every_math, fam_fnt, font, glue_order, glue_ptr, glue_sign, hang_after,
     hang_indent, hsize, info, info_mut, left_hyphen_min, link, link_mut,
@@ -19,8 +19,8 @@ use crate::math::{
 
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Scaled, SmallNumber, accent_chr,
-    delimiter, denominator, half, ho, hpack, left_delimiter, lig_char, mem,
-    mem_mut, nucleus, numerator, odd, right_delimiter, scripts_allowed,
+    delimiter, denominator, half, ho, hpack, left_delimiter, lig_char, nucleus,
+    numerator, odd, right_delimiter, scripts_allowed,
     sec404_get_next_nonblank_nonrelax_noncall_token,
     sec443_scan_an_optional_space, subscr, supscr, tail_append
 };
@@ -86,8 +86,8 @@ impl Global {
                     par_shape_ptr() + 2*(self.prev_graf() + 2)
                 };
 
-                let s = mem![(p - 1) as usize].sc();
-                let l = mem![p as usize].sc();
+                let s = mem((p - 1) as usize).sc();
+                let l = mem(p as usize).sc();
                 (l, s)
             };
             // End section 1149
@@ -153,7 +153,7 @@ impl Global {
 
                     LIGATURE_NODE => {
                         // Section 652
-                        *mem_mut![LIG_TRICK as usize] = mem![lig_char!(p) as usize];
+                        *mem_mut(LIG_TRICK as usize) = mem(lig_char!(p) as usize);
                         *link_mut(LIG_TRICK) = link(p);
                         p = LIG_TRICK;
                         continue 'reswitch; // Goto reswitch
@@ -355,9 +355,9 @@ impl Global {
         tail_append!(self, self.get_node(RADICAL_NOAD_SIZE)?);
         *type_mut(self.tail()) = RADICAL_NOAD;
         *subtype_mut(self.tail()) = NORMAL;
-        *mem_mut![nucleus!(self.tail()) as usize] = self.empty_field;
-        *mem_mut![subscr!(self.tail()) as usize] = self.empty_field;
-        *mem_mut![supscr!(self.tail()) as usize] = self.empty_field;
+        *mem_mut(nucleus!(self.tail()) as usize) = self.empty_field;
+        *mem_mut(subscr!(self.tail()) as usize) = self.empty_field;
+        *mem_mut(supscr!(self.tail()) as usize) = self.empty_field;
         self.scan_delimiter(left_delimiter!(self.tail()), true)?;
         self.scan_math(nucleus!(self.tail()))
     }
@@ -370,9 +370,9 @@ impl Global {
         tail_append!(self, self.get_node(ACCENT_NOAD_SIZE)?);
         *type_mut(self.tail()) = ACCENT_NOAD;
         *subtype_mut(self.tail()) = NORMAL;
-        *mem_mut![nucleus!(self.tail()) as usize] = self.empty_field;
-        *mem_mut![subscr!(self.tail()) as usize] = self.empty_field;
-        *mem_mut![supscr!(self.tail()) as usize] = self.empty_field;
+        *mem_mut(nucleus!(self.tail()) as usize) = self.empty_field;
+        *mem_mut(subscr!(self.tail()) as usize) = self.empty_field;
+        *mem_mut(supscr!(self.tail()) as usize) = self.empty_field;
         *math_type_mut(accent_chr!(self.tail())) = MATH_CHAR;
         self.scan_fifteen_bit_int()?;
         *character_mut(accent_chr!(self.tail())) = (self.cur_val % 256) as QuarterWord;
@@ -452,9 +452,9 @@ impl Global {
             *subtype_mut(self.incomplete_noad()) = NORMAL;
             *math_type_mut(numerator!(self.incomplete_noad())) = SUB_MLIST;
             *info_mut(numerator!(self.incomplete_noad())) = link(self.head());
-            *mem_mut![denominator!(self.incomplete_noad()) as usize] = self.empty_field;
-            *mem_mut![left_delimiter!(self.incomplete_noad()) as usize] = self.null_delimiter;
-            *mem_mut![right_delimiter!(self.incomplete_noad()) as usize] = self.null_delimiter;
+            *mem_mut(denominator!(self.incomplete_noad()) as usize) = self.empty_field;
+            *mem_mut(left_delimiter!(self.incomplete_noad()) as usize) = self.null_delimiter;
+            *mem_mut(right_delimiter!(self.incomplete_noad()) as usize) = self.null_delimiter;
             *link_mut(self.head()) = NULL;
             *self.tail_mut() = self.head();
 

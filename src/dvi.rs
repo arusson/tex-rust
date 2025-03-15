@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::datastructures::{
-    MEM, character, count, day, depth, font, glue_order, glue_ptr,
+    mem, mem_mut, character, count, day, depth, font, glue_order, glue_ptr,
     glue_set, glue_sign, h_offset, height, info, info_mut, leader_ptr,
     link, link_mut, list_ptr, mag, month, r#type, shift_amount, shrink,
     shrink_order, stretch, stretch_order, subtype, time, tracing_output,
@@ -12,13 +12,13 @@ use crate::extensions::{
 };
 use crate::io::{AlphaFileOutSelector, ByteFileOutSelector};
 use crate::strings::{
-    POOL, cur_length, length, pool_ptr, pool_ptr_mut, str_pool_slice,
+    POOL, cur_length, length, pool_ptr, pool_ptr_set, str_pool_slice,
     str_ptr, str_room, str_start
 };
 
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Real, Scaled, StrNum,
-    ins_list, is_running, lig_char, mem, mem_mut, str_pool, update_terminal
+    ins_list, is_running, lig_char, str_pool, update_terminal
 };
 
 use std::io::Write;
@@ -122,11 +122,11 @@ impl Global {
 
 // Section 605
 fn location(p: HalfWord) -> Integer {
-    mem![(p + 2) as usize].int()
+    mem((p + 2) as usize).int()
 }
 
 fn location_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + 2) as usize].int_mut()
+    mem_mut((p + 2) as usize).int_mut()
 }
 
 impl Global {
@@ -503,7 +503,7 @@ impl Global {
         
                     LIGATURE_NODE => {
                         // Section 652
-                        *mem_mut![LIG_TRICK as usize] = mem![lig_char!(p) as usize];
+                        *mem_mut(LIG_TRICK as usize) = mem(lig_char!(p) as usize);
                         *link_mut(LIG_TRICK) = link(p);
                         p = LIG_TRICK;
                         continue; // Goto reswitch
@@ -904,7 +904,8 @@ impl Global {
             for s in str_pool!(str_start(str_ptr()), pool_ptr()) {
                 dvi_out!(self, *s);
             }
-            *pool_ptr_mut() = str_start(str_ptr());
+            
+            pool_ptr_set(str_start(str_ptr()));
         }
         // End section 617
 
@@ -1054,7 +1055,7 @@ impl Global {
         for b in str_pool![str_start(str_ptr()), pool_ptr()] {
             dvi_out!(self, *b);
         }
-        *pool_ptr_mut() = str_start(str_ptr());
+        pool_ptr_set(str_start(str_ptr()));
         Ok(())
     }
 

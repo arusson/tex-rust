@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::datastructures::{
-    MEM, adjust_ptr_mut, box_max_depth, box_mut, character, cur_font,
+    mem, mem_mut, adjust_ptr_mut, box_max_depth, box_mut, character, cur_font,
     depth, depth_mut, every_hbox, every_par, every_vbox, float_cost_mut,
     floating_penalty, font, glue_ref_count_mut, hang_after, hang_indent,
     height, height_mut, info_mut, ins_ptr_mut, leader_ptr_mut,
@@ -14,7 +14,7 @@ use crate::error::{TeXError, TeXResult};
 use crate::math::{math_type, math_type_mut};
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Real, Scaled, SmallNumber,
-    add_glue_ref, contrib_tail, hpack, lig_char, mem, mem_mut, nucleus,
+    add_glue_ref, contrib_tail, hpack, lig_char, nucleus,
     sec404_get_next_nonblank_nonrelax_noncall_token, subscr, supscr,
     tail_append, vpack
 };
@@ -213,7 +213,7 @@ impl Global {
                 if p != NULL && link(p) == NULL {
                     if r#type(p) == ORD_NOAD {
                         if math_type(subscr!(p)) == EMPTY && math_type(supscr!(p)) == EMPTY {
-                            *mem_mut![self.saved(0) as usize] = mem![nucleus!(p) as usize];
+                            *mem_mut(self.saved(0) as usize) = mem(nucleus!(p) as usize);
                             self.free_node(p, NOAD_SIZE);
                         }
                     }

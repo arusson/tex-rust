@@ -4,8 +4,8 @@ use crate::error::{TeXError, TeXResult};
 use crate::io::AlphaFileInSelector;
 use crate::strings::{
     POOL, append_char, cur_length, flush_string, init_str_ptr, length,
-    make_string, pool_ptr, pool_ptr_mut, str_eq_str, str_pool_slice,
-    str_ptr, str_ptr_mut, str_room, str_start, str_start_mut
+    make_string, pool_ptr, pool_ptr_set, str_eq_str, str_pool_slice,
+    str_ptr, str_ptr_set, str_room, str_start, str_start_mut
 };
 use crate::{
     Global, HalfWord, Integer, StrNum, end_line_char_inactive,
@@ -54,7 +54,7 @@ impl Global {
         else {
             self.cur_area = str_ptr();
             *str_start_mut(str_ptr() + 1) = str_start(str_ptr()) + self.area_delimiter;
-            *str_ptr_mut() += 1;
+            str_ptr_set(str_ptr() + 1);
         }
 
         if self.ext_delimiter == 0 {
@@ -64,7 +64,7 @@ impl Global {
         else {
             self.cur_name = str_ptr();
             *str_start_mut(str_ptr() + 1) = str_start(str_ptr()) + self.ext_delimiter - self.area_delimiter - 1;
-            *str_ptr_mut() += 1;
+            str_ptr_set(str_ptr() + 1);
             self.cur_ext = make_string()?;
         }
         Ok(())
@@ -92,7 +92,7 @@ impl Global {
 
     // Section 525
     pub(crate) fn make_name_string(&mut self) -> TeXResult<StrNum> {
-        let l = self.name_of_file.as_bytes().len();
+        let l = self.name_of_file.len();
         if pool_ptr() + l > POOL_SIZE as usize
             || str_ptr() == MAX_STRINGS as usize
             || cur_length() > 0
@@ -101,7 +101,7 @@ impl Global {
         }
         else {
             str_pool_mut![pool_ptr(), pool_ptr() + l].copy_from_slice(self.name_of_file.as_bytes());
-            *pool_ptr_mut() += l;
+            pool_ptr_set(pool_ptr() + l);
             make_string()
         }
     }

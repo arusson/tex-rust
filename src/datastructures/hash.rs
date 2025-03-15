@@ -4,7 +4,7 @@ use crate::datastructures::{
 };
 use crate::error::{TeXError, TeXResult};
 use crate::strings::{
-    POOL, append_char, cur_length, length, make_string, pool_ptr, pool_ptr_mut,
+    POOL, append_char, cur_length, length, make_string, pool_ptr, pool_ptr_set,
     str_ptr, str_room, str_start
 };
 use crate::{
@@ -117,14 +117,14 @@ impl Global {
                     str_room(l)?;
                     let d = cur_length();
                     while pool_ptr() > str_start(str_ptr()) {
-                        *pool_ptr_mut() -= 1;
+                        pool_ptr_set(pool_ptr() - 1);
                         *str_pool_mut![pool_ptr() + l] = str_pool![pool_ptr()];
                     }
                     for k in j..(j + l) {
                         append_char(self.buffer[k]);
                     }
                     *text_mut(p) = make_string()? as HalfWord;
-                    *pool_ptr_mut() += d;
+                    pool_ptr_set(pool_ptr() + d);
                     #[cfg(feature = "stat")]
                     { self.cs_count += 1; }
                     // End section 260

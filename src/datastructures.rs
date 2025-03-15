@@ -48,7 +48,7 @@ pub(crate) use hash::{
 };
 
 pub(crate) use memory::{
-    MEM, MemoryWord, info, info_mut, link, link_mut, llink, llink_mut,
+    MEM, mem, mem_mut, MemoryWord, info, info_mut, link, link_mut, llink, llink_mut,
     node_size, node_size_mut, rlink, rlink_mut, token_ref_count_mut
 };
 

@@ -1,7 +1,7 @@
 use crate::arithmetic::badness;
 use crate::constants::*;
 use crate::datastructures::{
-    MEM, adj_demerits, broken_penalty, character, club_penalty,
+    mem, mem_mut, adj_demerits, broken_penalty, character, club_penalty,
     double_hyphen_demerits, emergency_stretch, ex_hyphen_penalty,
     final_hyphen_demerits, font, glue_ptr, glue_ptr_mut, glue_ref_count_mut,
     hang_after, hang_indent, hsize, hyphen_penalty, info, inter_line_penalty,
@@ -18,7 +18,7 @@ use crate::extensions::{
 };
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Scaled, SmallNumber,
-    add_glue_ref, hpack, lig_char, mem, mem_mut, non_discardable,
+    add_glue_ref, hpack, lig_char, non_discardable,
     odd, precedes_break, tail_append
 };
 
@@ -174,8 +174,12 @@ impl Global {
         }
         else {
             self.last_special_line = info(par_shape_ptr()) - 1;
-            self.second_width = mem![(par_shape_ptr() + 2*(self.last_special_line + 1)) as usize].sc();
-            self.second_indent = mem![(par_shape_ptr() + 2*self.last_special_line + 1) as usize].sc();
+            self.second_width = mem(
+                (par_shape_ptr() + 2*(self.last_special_line + 1)) as usize
+            ).sc();
+            self.second_indent = mem(
+                (par_shape_ptr() + 2*self.last_special_line + 1) as usize
+            ).sc();
         }
         self.easy_line = if looseness() == 0 {
             self.last_special_line
@@ -427,11 +431,11 @@ pub(crate) fn line_number_mut(p: HalfWord) -> &'static mut HalfWord {
 }
 
 fn total_demerits(p: HalfWord) -> Integer {
-    mem![(p + 2) as usize].int()
+    mem((p + 2) as usize).int()
 }
 
 fn total_demerits_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + 2) as usize].int_mut()
+    mem_mut((p + 2) as usize).int_mut()
 }
 
 // Section 821
@@ -506,7 +510,7 @@ impl Global {
         // Section 832
         macro_rules! update_width {
             ($p:expr) => {
-                self.cur_active_width[$p] += mem![(r + $p) as usize].sc();
+                self.cur_active_width[$p] += mem((r + $p) as usize).sc();
             };
         }
         // End section 832
@@ -514,7 +518,7 @@ impl Global {
         // Section 843
         macro_rules! convert_to_break_width {
             ($p:expr) => {
-                *mem_mut![(prev_r + $p) as usize].sc_mut() += -self.cur_active_width[$p] + self.break_width[$p];
+                *mem_mut((prev_r + $p) as usize).sc_mut() += -self.cur_active_width[$p] + self.break_width[$p];
             };
         }
 
@@ -566,7 +570,7 @@ impl Global {
 
                         macro_rules! new_delta_to_break_width {
                             ($p:expr) => {
-                                *mem_mut![(q + $p) as usize].sc_mut() = self.break_width[$p] - self.cur_active_width[$p];
+                                *mem_mut((q + $p) as usize).sc_mut() = self.break_width[$p] - self.cur_active_width[$p];
                             };
                         }
 
@@ -644,7 +648,7 @@ impl Global {
                         
                         macro_rules! new_delta_from_break_width {
                             ($p:expr) => {
-                                *mem_mut![(q + $p) as usize].sc_mut() = self.cur_active_width[$p] - self.break_width[$p];
+                                *mem_mut((q + $p) as usize).sc_mut() = self.cur_active_width[$p] - self.break_width[$p];
                             };
                         }
 
@@ -680,7 +684,7 @@ impl Global {
                         self.first_width
                     }
                     else {
-                        mem![(par_shape_ptr() + 2*l) as usize].sc()
+                        mem((par_shape_ptr() + 2*l) as usize).sc()
                     }
                 };
                 // End section 850
@@ -850,20 +854,20 @@ impl Global {
             // Section 860
             macro_rules! combine_two_deltas {
                 ($p:expr) => {
-                    *mem_mut![(prev_r + $p) as usize].sc_mut() += mem![(r + $p) as usize].sc()
+                    *mem_mut((prev_r + $p) as usize).sc_mut() += mem((r + $p) as usize).sc()
                 };
             }
 
             macro_rules! downdate_width {
                 ($p:expr) => {
-                    self.cur_active_width[$p] -= mem![(prev_r + $p) as usize].sc();
+                    self.cur_active_width[$p] -= mem((prev_r + $p) as usize).sc();
                 };
             }
 
             // Section 861
             macro_rules! update_active {
                 ($p:expr) => {
-                    self.active_width[$p] += mem![(r + $p) as usize].sc();
+                    self.active_width[$p] += mem((r + $p) as usize).sc();
                 };
             }
             // End section 861
@@ -1377,8 +1381,8 @@ impl Global {
         }
         else {
             (
-                mem![(par_shape_ptr() + 2*cur_line) as usize].sc(),
-                mem![(par_shape_ptr() + 2*cur_line - 1) as usize].sc()
+                mem((par_shape_ptr() + 2*cur_line) as usize).sc(),
+                mem((par_shape_ptr() + 2*cur_line - 1) as usize).sc()
             )
         };
 

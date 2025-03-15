@@ -129,33 +129,34 @@ pub fn pool_ptr() -> usize {
     unsafe { POOL.pool_ptr }
 }
 
-pub(crate) fn pool_ptr_mut() -> &'static mut usize {
-    unsafe { &mut POOL.pool_ptr }
+pub(crate) fn pool_ptr_set(value: usize) {
+    unsafe { POOL.pool_ptr = value };
 }
 
 pub fn str_ptr() -> StrNum {
     unsafe { POOL.str_ptr }
 }
 
-pub(crate) fn str_ptr_mut() -> &'static mut StrNum {
-    unsafe { &mut POOL.str_ptr }
+pub(crate) fn str_ptr_set(value: StrNum) {
+    unsafe { POOL.str_ptr = value };
 }
+
 
 #[cfg(feature = "stat")]
 pub(crate) fn init_pool_ptr() -> usize {
     unsafe { POOL.init_pool_ptr }
 }
 
-pub fn init_pool_ptr_mut() -> &'static mut usize {
-    unsafe { &mut POOL.init_pool_ptr }
+pub fn init_pool_ptr_set(value: usize) {
+    unsafe { POOL.init_pool_ptr = value };
 }
 
 pub(crate) fn init_str_ptr() -> StrNum {
     unsafe { POOL.init_str_ptr }
 }
 
-pub fn init_str_ptr_mut() -> &'static mut StrNum {
-    unsafe { &mut POOL.init_str_ptr }
+pub fn init_str_ptr_set(value: StrNum) {
+    unsafe { POOL.init_str_ptr = value };
 }
 
 // Section 40
@@ -273,8 +274,8 @@ pub fn get_strings_started() -> TeXResult<()> {
         };
     }
 
-    *pool_ptr_mut() = 0;
-    *str_ptr_mut() = 0;
+    pool_ptr_set(0);
+    str_ptr_set(0);
     *str_start_mut(0) = 0;
 
     // Section 48

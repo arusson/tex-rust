@@ -2,7 +2,7 @@ use crate::arithmetic::badness;
 use crate::constants::*;
 use crate::error::{TeXError, TeXResult};
 use crate::datastructures::{
-    MEM, adjust_ptr, baseline_skip, character, depth, depth_mut, font,
+    mem, mem_mut, adjust_ptr, baseline_skip, character, depth, depth_mut, font,
     glue_order_mut, glue_ptr, glue_set_mut, glue_sign_mut, hbadness, height,
     height_mut, hfuzz, leader_ptr, line_skip_limit, link, link_mut, list_ptr,
     list_ptr_mut, overfull_rule, shift_amount, shift_amount_mut, shrink,
@@ -10,8 +10,7 @@ use crate::datastructures::{
     type_mut, vbadness, vfuzz, width, width_mut
 };
 use crate::{
-    Global, HalfWord, QuarterWord, Real, Scaled, SmallNumber,
-    lig_char, mem, mem_mut
+    Global, HalfWord, QuarterWord, Real, Scaled, SmallNumber, lig_char
 };
 
 // Part 33: Packaging
@@ -145,7 +144,7 @@ impl Global {
 
                         LIGATURE_NODE => {
                             // Section 652
-                            *mem_mut![LIG_TRICK as usize] = mem![lig_char!(p) as usize];
+                            *mem_mut(LIG_TRICK as usize) = mem(lig_char!(p) as usize);
                             *link_mut(LIG_TRICK) = link(p);
                             p = LIG_TRICK;
                             continue 'reswitch;

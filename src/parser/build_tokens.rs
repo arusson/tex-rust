@@ -4,7 +4,7 @@ use crate::datastructures::{
 };
 use crate::error::{TeXError, TeXResult};
 use crate::io::AlphaFileInSelector;
-use crate::strings::{POOL, pool_ptr, pool_ptr_mut, str_room};
+use crate::strings::{POOL, pool_ptr, pool_ptr_set, str_room};
 use crate::{
     Global, HalfWord, Integer, QuarterWord, end_line_char_inactive, str_pool
 };
@@ -26,7 +26,7 @@ impl Global {
             self.fast_store_new_token(&mut p, t)?;
             k += 1;
         }
-        *pool_ptr_mut() = b;
+        pool_ptr_set(b);
         Ok(p)
     }
 

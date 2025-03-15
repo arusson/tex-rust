@@ -3,7 +3,7 @@ use crate::arithmetic::{
 };
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, MEM, r#box, equiv, equiv_mut, font_id_text_mut, geq_word_define,
+    EQTB, mem_mut, r#box, equiv, equiv_mut, font_id_text_mut, geq_word_define,
     global_defs, glue_ref_count_mut, info, info_mut, link, link_mut,
     shrink, shrink_mut, shrink_order, shrink_order_mut, stretch,
     stretch_mut, stretch_order, stretch_order_mut, text, token_ref_count_mut,
@@ -17,7 +17,7 @@ use crate::strings::{
 use crate::{
     Global, HalfWord, Integer, QuarterWord, SmallNumber, StrNum,
     add_glue_ref, add_token_ref, back_list, eqtb, eqtb_mut,
-    free_avail, hi, mem_mut, mult_integers, nx_plus_y, odd,
+    free_avail, hi, mult_integers, nx_plus_y, odd,
     sec404_get_next_nonblank_nonrelax_noncall_token, update_terminal
 };
 use std::io::Write;
@@ -364,9 +364,9 @@ impl Global {
                     *info_mut(p) = n;
                     for j in 1..=n {
                         self.scan_dimen(false, false, false)?;
-                        *mem_mut![(p + 2*j - 1) as usize].sc_mut() = self.cur_val;
+                        *mem_mut((p + 2*j - 1) as usize).sc_mut() = self.cur_val;
                         self.scan_dimen(false, false, false)?;
-                        *mem_mut![(p + 2*j) as usize].sc_mut() = self.cur_val;
+                        *mem_mut((p + 2*j) as usize).sc_mut() = self.cur_val;
                     }
                     p
                 };
@@ -696,7 +696,7 @@ impl Global {
         self.scan_optional_equals()?;
         self.scan_dimen(false, false, false)?;
         if r#box(b) != NULL {
-            *mem_mut![(r#box(b) + c) as usize].sc_mut() = self.cur_val;
+            *mem_mut((r#box(b) + c) as usize).sc_mut() = self.cur_val;
         }
         Ok(())
     }

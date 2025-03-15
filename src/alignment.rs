@@ -1,7 +1,7 @@
 
 use crate::constants::*; 
 use crate::datastructures::{
-    MEM, Status, depth, depth_mut, display_indent, every_cr, global_defs,
+    mem, mem_mut, Status, depth, depth_mut, display_indent, every_cr, global_defs,
     glue_order, glue_order_mut, glue_ptr, glue_ptr_mut, glue_ref_count_mut,
     glue_set, glue_set_mut, glue_shrink, glue_shrink_mut, glue_sign,
     glue_sign_mut, glue_stretch, glue_stretch_mut, height, height_mut,
@@ -14,7 +14,7 @@ use crate::datastructures::{
 use crate::error::{TeXResult, TeXError};
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Real, Scaled, SmallNumber,
-    add_glue_ref, free_avail, hpack, is_running, mem, mem_mut,
+    add_glue_ref, free_avail, hpack, is_running,
     sec406_get_next_nonblank_noncall_token, tail_append, vpack
 };
 
@@ -24,19 +24,19 @@ use std::cmp::Ordering::{Equal, Greater, Less};
 
 // Section 769
 fn u_part(p: HalfWord) -> Integer {
-    mem![(p + HEIGHT_OFFSET) as usize].int()
+    mem((p + HEIGHT_OFFSET) as usize).int()
 }
 
 fn u_part_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + HEIGHT_OFFSET) as usize].int_mut()
+    mem_mut((p + HEIGHT_OFFSET) as usize).int_mut()
 }
 
 pub(crate) fn v_part(p: HalfWord) -> Integer {
-    mem![(p + DEPTH_OFFSET) as usize].int()
+    mem((p + DEPTH_OFFSET) as usize).int()
 }
 
 fn v_part_mut(p: HalfWord) -> &'static mut Integer {
-    mem_mut![(p + DEPTH_OFFSET) as usize].int_mut()
+    mem_mut((p + DEPTH_OFFSET) as usize).int_mut()
 }
 
 pub(crate) fn extra_info(p: HalfWord) -> HalfWord {
@@ -64,8 +64,8 @@ impl Global {
         *info_mut(p) = self.cur_align;
         *llink_mut(p) = preamble();
         *rlink_mut(p) = self.cur_span;
-        *mem_mut![(p + 2) as usize].int_mut() = self.cur_loop;
-        *mem_mut![(p + 3) as usize].int_mut() = self.align_state;
+        *mem_mut((p + 2) as usize).int_mut() = self.cur_loop;
+        *mem_mut((p + 3) as usize).int_mut() = self.align_state;
         *info_mut(p + 4) = self.cur_head;
         *link_mut(p + 4) = self.cur_tail;
         self.align_ptr = p;
@@ -78,8 +78,8 @@ impl Global {
         let p = self.align_ptr;
         self.cur_tail = link(p + 4);
         self.cur_head = info(p + 4);
-        self.align_state = mem![(p + 3) as usize].int();
-        self.cur_loop = mem![(p + 2) as usize].int();
+        self.align_state = mem((p + 3) as usize).int();
+        self.cur_loop = mem((p + 2) as usize).int();
         self.cur_span = rlink(p);
         *preamble_mut() = llink(p);
         self.cur_align = info(p);

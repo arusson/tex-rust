@@ -151,35 +151,29 @@ impl MemoryWord {
 
 pub(crate) static mut MEM: [MemoryWord; (MEM_MAX - MEM_MIN + 1) as usize] = [MemoryWord::ZERO; (MEM_MAX - MEM_MIN + 1) as usize];
 
-#[macro_export]
-macro_rules! mem {
-    ($p:expr) => {
-        unsafe { MEM[$p] }
-    };
+pub(crate) fn mem(p: usize) -> MemoryWord {
+    unsafe { MEM[p] }
 }
 
-#[macro_export]
-macro_rules! mem_mut {
-    ($p:expr) => {
-        unsafe { &mut MEM[$p] }
-    };
+pub(crate) fn mem_mut(p: usize) -> &'static mut MemoryWord {
+    unsafe { &mut MEM[p] }
 }
 
 // Section 118
 pub(crate) fn link(p: HalfWord) -> HalfWord {
-    mem![p as usize].hh_rh()
+    mem(p as usize).hh_rh()
 }
 
 pub(crate) fn link_mut(p: HalfWord) -> &'static mut HalfWord {
-    mem_mut![p as usize].hh_rh_mut()
+    mem_mut(p as usize).hh_rh_mut()
 }
 
 pub(crate) fn info(p: HalfWord) -> HalfWord {
-    mem![p as usize].hh_lh()
+    mem(p as usize).hh_lh()
 }
 
 pub(crate) fn info_mut(p: HalfWord) -> &'static mut HalfWord {
-    mem_mut![p as usize].hh_lh_mut()
+    mem_mut(p as usize).hh_lh_mut()
 }
 
 impl Global {
@@ -834,7 +828,7 @@ impl Global {
 
             while words > 0 {
                 words -= 1;
-                *mem_mut![(r + words) as usize] = mem![(p + words) as usize];
+                *mem_mut((r + words) as usize) = mem((p + words) as usize);
             }
             // End section 205
 
@@ -857,8 +851,8 @@ impl Global {
             | VLIST_NODE
             | UNSET_NODE => {
                 r = self.get_node(BOX_NODE_SIZE)?;
-                *mem_mut![(r + 6) as usize] = mem![(p + 6) as usize];
-                *mem_mut![(r + 5) as usize] = mem![(p + 5) as usize];
+                *mem_mut((r + 6) as usize) = mem((p + 6) as usize);
+                *mem_mut((r + 5) as usize) = mem((p + 5) as usize);
                 *list_ptr_mut(r) = self.copy_node_list(list_ptr(p))?;
                 words = 5;
             },
@@ -870,7 +864,7 @@ impl Global {
 
             INS_NODE => {
                 r = self.get_node(INS_NODE_SIZE)?;
-                *mem_mut![(r + 4) as usize] = mem![(p + 4) as usize];
+                *mem_mut((r + 4) as usize) = mem((p + 4) as usize);
                 add_glue_ref!(split_top_ptr(p));
                 *ins_ptr_mut(r) = self.copy_node_list(ins_ptr(p))?;
                 words = INS_NODE_SIZE - 1;
@@ -918,7 +912,7 @@ impl Global {
 
             LIGATURE_NODE => {
                 r = self.get_node(SMALL_NODE_SIZE)?;
-                *mem_mut![lig_char!(r) as usize] = mem![lig_char!(p) as usize];
+                *mem_mut(lig_char!(r) as usize) = mem(lig_char!(p) as usize);
                 *lig_ptr_mut(r) = self.copy_node_list(lig_ptr(p))?;
             },
 
