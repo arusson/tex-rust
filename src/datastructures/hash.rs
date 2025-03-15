@@ -4,12 +4,11 @@ use crate::datastructures::{
 };
 use crate::error::{TeXError, TeXResult};
 use crate::strings::{
-    POOL, append_char, cur_length, length, make_string, pool_ptr, pool_ptr_set,
+    str_pool, str_pool_mut, append_char, cur_length, length, make_string, pool_ptr, pool_ptr_set,
     str_ptr, str_room, str_start
 };
 use crate::{
-    Global, HalfWord, Integer, QuarterWord, StrNum,
-    str_pool, str_pool_mut
+    Global, HalfWord, Integer, QuarterWord, StrNum
 };
 
 use std::ops::{Index, IndexMut};
@@ -112,7 +111,7 @@ impl Global {
                     let d = cur_length();
                     while pool_ptr() > str_start(str_ptr()) {
                         pool_ptr_set(pool_ptr() - 1);
-                        *str_pool_mut![pool_ptr() + l] = str_pool![pool_ptr()];
+                        *str_pool_mut(pool_ptr() + l) = str_pool(pool_ptr());
                     }
                     for k in j..(j + l) {
                         append_char(self.buffer[k]);

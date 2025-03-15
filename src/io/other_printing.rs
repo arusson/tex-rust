@@ -14,9 +14,9 @@ use crate::{
 
 #[cfg(feature = "stat")]
 use crate::{
-    eqtb, hash, ho,
+    ho,
     datastructures::{
-        EQTB, HASH, eq_type, equiv, info, par_shape_ptr},
+        eqtb, hash, eq_type, equiv, info, par_shape_ptr},
 };
 
 use std::cmp::Ordering::{Equal, Greater, Less};
@@ -405,7 +405,7 @@ impl Global {
                 self.print_int(n - DEL_CODE_BASE);
             }
             self.print_char(b'=');
-            self.print_int(eqtb![n as usize].int());
+            self.print_int(eqtb(n as usize).int());
             // End section 242
         }
         else if n <= EQTB_SIZE {
@@ -418,7 +418,7 @@ impl Global {
                 self.print_int(n - SCALED_BASE);
             }
             self.print_char(b'=');
-            self.print_scaled(eqtb![n as usize].sc());
+            self.print_scaled(eqtb(n as usize).sc());
             self.print("pt");
             // End section 251
         }
@@ -447,7 +447,7 @@ impl Global {
         }
         self.print_char(b'=');
         self.print_esc_strnumber(
-            hash![(FONT_ID_BASE + equiv(n)) as usize].hh_rh() as StrNum
+            hash((FONT_ID_BASE + equiv(n)) as usize).hh_rh() as StrNum
         );
     }
 

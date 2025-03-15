@@ -4,10 +4,10 @@ use crate::datastructures::{
 };
 use crate::error::{TeXError, TeXResult};
 use crate::strings::{
-    POOL,  append_char, length, make_string, str_room, str_start
+    str_pool, append_char, length, make_string, str_room, str_start
 };
 use crate::{
-    Global, HalfWord, Integer, QuarterWord, SmallNumber, str_pool
+    Global, HalfWord, Integer, QuarterWord, SmallNumber
 };
 
 use std::ops::{IndexMut, Index};
@@ -123,10 +123,10 @@ impl Global {
                                     Equal => {
                                         let (mut u, mut v) = (str_start(k), str_start(s));
                                         loop {
-                                            if str_pool![u] < str_pool![v] {
+                                            if str_pool(u) < str_pool(v) {
                                                 break true; // Goto found
                                             }
-                                            if str_pool![u] > str_pool![v] {
+                                            if str_pool(u) > str_pool(v) {
                                                 break false; // Goto not_found
                                             }
                                             u += 1;

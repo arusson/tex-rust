@@ -6,11 +6,11 @@ use crate::datastructures::{
 use crate::error::{TeXError, TeXResult};
 use crate::io::{ByteFileInSelector, ByteFileOutSelector};
 use crate::strings::{
-    POOL, init_pool_ptr_set, init_str_ptr_set, make_string, pool_ptr,
+    str_pool, str_pool_mut, init_pool_ptr_set, init_str_ptr_set, make_string, pool_ptr,
     pool_ptr_set, str_ptr, str_ptr_set, str_room, str_start, str_start_mut
 };
 use crate::{
-    Global, Integer, QuarterWord, StrNum, str_pool, str_pool_mut
+    Global, Integer, QuarterWord, StrNum
 };
 
 // Part 50: Dumping and undumping the tables
@@ -117,10 +117,10 @@ impl Global {
         macro_rules! dump_four_ASCII {
             () => {
                 let w = MemoryWord { qqqq: [
-                    str_pool![k] as QuarterWord,
-                    str_pool![k + 1] as QuarterWord,
-                    str_pool![k + 2] as QuarterWord,
-                    str_pool![k + 3] as QuarterWord
+                    str_pool(k) as QuarterWord,
+                    str_pool(k + 1) as QuarterWord,
+                    str_pool(k + 2) as QuarterWord,
+                    str_pool(k + 3) as QuarterWord
                 ]};
                 dump_wd!(w);
             };
@@ -493,10 +493,10 @@ impl Global {
                 () => {
                     match self.fmt_file.read_wd() {
                         Some(w) => {
-                            *str_pool_mut![k] = w.qqqq_b0() as u8;
-                            *str_pool_mut![k + 1] = w.qqqq_b1() as u8;
-                            *str_pool_mut![k + 2] = w.qqqq_b2() as u8;
-                            *str_pool_mut![k + 3] = w.qqqq_b3() as u8;
+                            *str_pool_mut(k) = w.qqqq_b0() as u8;
+                            *str_pool_mut(k + 1) = w.qqqq_b1() as u8;
+                            *str_pool_mut(k + 2) = w.qqqq_b2() as u8;
+                            *str_pool_mut(k + 3) = w.qqqq_b3() as u8;
                         },
                         None => break 'load_fmt false,
                     }

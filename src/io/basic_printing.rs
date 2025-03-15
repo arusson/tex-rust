@@ -3,10 +3,10 @@ use crate::datastructures::{
     escape_char, new_line_char, new_line_char_mut, 
 };
 use crate::strings::{
-    POOL, XCHR, append_char, pool_ptr, str_ptr, str_start
+    str_pool, XCHR, append_char, pool_ptr, str_ptr, str_start
 };
 use crate::{
-    Global, Integer, Scaled, StrNum, odd, str_pool
+    Global, Integer, Scaled, StrNum, odd
 };
 
 #[cfg(feature = "debug")]
@@ -131,7 +131,7 @@ impl Global {
             *new_line_char_mut() = -1;
             let mut j = str_start(s);
             while j < str_start(s + 1) {
-                self.print_char(str_pool![j]);
+                self.print_char(str_pool(j));
                 j += 1;
             }
             *new_line_char_mut() = nl;
@@ -140,7 +140,7 @@ impl Global {
 
         let mut j = str_start(s);
         while j < str_start(s + 1) {
-            self.print_char(str_pool![j]);
+            self.print_char(str_pool(j));
             j += 1;
         }
     }
@@ -153,7 +153,7 @@ impl Global {
         else {
             let mut j = str_start(s);
             while j < str_start(s + 1) {
-                self.print_strnumber(str_pool![j] as usize);
+                self.print_strnumber(str_pool(j) as usize);
                 j += 1;
             }
         }
@@ -298,7 +298,7 @@ impl Global {
     pub(crate) fn print_current_string(&mut self) {
         let mut j = str_start(str_ptr());
         while j < pool_ptr() {
-            self.print_char(str_pool![j]);
+            self.print_char(str_pool(j));
             j += 1;
         }
     }

@@ -95,26 +95,12 @@ impl IndexMut<Range<usize>> for StrPool {
     }
 }
 
-#[macro_export]
-macro_rules! str_pool {
-    ($p:expr) => [
-        unsafe { POOL[$p] }
-    ];
-    
-    ($start:expr, $end:expr) => [
-        unsafe { &POOL[$start..$end] }
-    ]
+pub(crate) fn str_pool(p: StrNum) -> ASCIICode {
+    unsafe { POOL[p] }
 }
 
-#[macro_export]
-macro_rules! str_pool_mut {
-    ($p:expr) => [
-        unsafe { &mut POOL[$p] }
-    ];
-    
-    ($start:expr, $end:expr) => [
-        unsafe { &mut POOL[$start..$end] }
-    ]
+pub(crate) fn str_pool_mut(p: StrNum) -> &'static mut ASCIICode {
+    unsafe { &mut POOL[p] }
 }
 
 pub(crate) fn str_start(p: usize) -> StrNum {

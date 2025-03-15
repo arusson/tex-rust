@@ -6,11 +6,11 @@ use crate::datastructures::{
 };
 use crate::error::TeXResult;
 use crate::strings::{
-    POOL, length, str_start
+    str_pool, length, str_start
 };
 use crate::{
     Global, HalfWord, Integer, QuarterWord, SmallNumber,
-    free_avail, lig_char, odd, str_pool
+    free_avail, lig_char, odd
 };
 
 // Part 40: Pre-hyphenation
@@ -43,10 +43,10 @@ impl Global {
                         let mut u = str_start(k);
                         
                         'sec931: loop {
-                            if str_pool![u] < self.hc[j] as u8 {
+                            if str_pool(u) < self.hc[j] as u8 {
                                 break 'sec930; // Goto not_found
                             }
-                            if str_pool![u] > self.hc[j] as u8 {
+                            if str_pool(u) > self.hc[j] as u8 {
                                 break 'innerblock; // Goto done
                             }
                             j += 1;

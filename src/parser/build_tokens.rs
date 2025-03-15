@@ -4,9 +4,9 @@ use crate::datastructures::{
 };
 use crate::error::{TeXError, TeXResult};
 use crate::io::AlphaFileInSelector;
-use crate::strings::{POOL, pool_ptr, pool_ptr_set, str_room};
+use crate::strings::{str_pool, pool_ptr, pool_ptr_set, str_room};
 use crate::{
-    Global, HalfWord, Integer, QuarterWord, end_line_char_inactive, str_pool
+    Global, HalfWord, Integer, QuarterWord, end_line_char_inactive
 };
 
 // Part 27: Building token lists
@@ -19,9 +19,9 @@ impl Global {
         *link_mut(p) = NULL;
         let mut k = b;
         while k < pool_ptr() {
-            let t = match str_pool![k] {
+            let t = match str_pool(k) {
                 b' ' => SPACE_TOKEN,
-                _ => OTHER_TOKEN + str_pool![k] as HalfWord,
+                _ => OTHER_TOKEN + str_pool(k) as HalfWord,
             };
             self.fast_store_new_token(&mut p, t)?;
             k += 1;

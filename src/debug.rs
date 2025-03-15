@@ -1,12 +1,12 @@
 use crate::constants::{
     MAX_QUARTERWORD, NULL, NULL_FONT, POOL_SIZE, TERM_ONLY
 };
-use crate::datastructures::{EQTB, MEM, info, link};
+use crate::datastructures::{eqtb, mem, info, link};
 use crate::error::TeXResult;
 use crate::io::term_input_int;
 use crate::strings::pool_ptr;
 use crate::{
-    Global, Integer, QuarterWord, StrNum, update_terminal, mem, eqtb
+    Global, Integer, QuarterWord, StrNum, update_terminal
 };
 
 use std::io::Write;
@@ -68,7 +68,7 @@ impl Global {
             match m {
                 1 => {
                     let n = read_integer_prompt!("n");
-                    self.print_word(mem![n as usize]);
+                    self.print_word(mem(n as usize));
                 },
 
                 2 => {
@@ -83,7 +83,7 @@ impl Global {
 
                 4 => {
                     let n = read_integer_prompt!("n");
-                    self.print_word(eqtb![n as usize]);
+                    self.print_word(eqtb(n as usize));
                 },
 
                 5 => {

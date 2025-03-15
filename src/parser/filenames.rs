@@ -9,7 +9,7 @@ use crate::strings::{
 };
 use crate::{
     Global, HalfWord, Integer, StrNum, end_line_char_inactive,
-    sec406_get_next_nonblank_noncall_token, str_pool_mut, update_terminal
+    sec406_get_next_nonblank_noncall_token, update_terminal
 };
 
 use std::io::Write;
@@ -100,7 +100,9 @@ impl Global {
             Ok(b'?' as StrNum)
         }
         else {
-            str_pool_mut![pool_ptr(), pool_ptr() + l].copy_from_slice(self.name_of_file.as_bytes());
+            unsafe {
+                POOL[pool_ptr()..pool_ptr() + l].copy_from_slice(self.name_of_file.as_bytes());
+            }
             pool_ptr_set(pool_ptr() + l);
             make_string()
         }

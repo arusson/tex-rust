@@ -18,7 +18,7 @@ use crate::strings::{
 
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Real, Scaled, StrNum,
-    ins_list, is_running, lig_char, str_pool, update_terminal
+    ins_list, is_running, lig_char, update_terminal
 };
 
 use std::io::Write;
@@ -109,12 +109,12 @@ impl Global {
 
         // Section 603
         let s = self.font_area[f as usize];
-        for b in str_pool_slice(s) {
-            dvi_out!(self, *b);
+        for &b in str_pool_slice(s) {
+            dvi_out!(self, b);
         }
         let s = self.font_name[f as usize];
-        for b in str_pool_slice(s) {
-            dvi_out!(self, *b);
+        for &b in str_pool_slice(s) {
+            dvi_out!(self, b);
         }
         // End section 603
     }
@@ -901,8 +901,11 @@ impl Global {
             self.print_two(time() % 60);
             self.selector = old_setting;
             dvi_out!(self, cur_length() as u8);
-            for s in str_pool!(str_start(str_ptr()), pool_ptr()) {
-                dvi_out!(self, *s);
+
+            unsafe {
+                for &s in POOL[str_start(str_ptr())..pool_ptr()].iter() {
+                    dvi_out!(self, s);
+                }    
             }
             
             pool_ptr_set(str_start(str_ptr()));
@@ -1052,8 +1055,11 @@ impl Global {
             dvi_out!(self, XXX4);
             self.dvi_four(cur_length() as Integer);
         }
-        for b in str_pool![str_start(str_ptr()), pool_ptr()] {
-            dvi_out!(self, *b);
+        
+        unsafe {
+            for &b in POOL[str_start(str_ptr())..pool_ptr()].iter() {
+                dvi_out!(self, b);
+            }
         }
         pool_ptr_set(str_start(str_ptr()));
         Ok(())
