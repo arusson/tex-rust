@@ -141,7 +141,6 @@ pub(crate) fn str_ptr_set(value: StrNum) {
     unsafe { POOL.str_ptr = value };
 }
 
-
 #[cfg(feature = "stat")]
 pub(crate) fn init_pool_ptr() -> usize {
     unsafe { POOL.init_pool_ptr }

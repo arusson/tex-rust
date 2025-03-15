@@ -1,6 +1,6 @@
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, HASH, mem, mem_mut, MemoryWord, day, eq_level, eq_type, equiv, font_id_text,
+    eqtb, eqtb_mut, HASH, mem, mem_mut, MemoryWord, day, eq_level, eq_type, equiv, font_id_text,
     link, month, node_size, rlink, text, tracing_stats_mut, year
 };
 use crate::error::{TeXError, TeXResult};
@@ -10,7 +10,7 @@ use crate::strings::{
     pool_ptr_set, str_ptr, str_ptr_set, str_room, str_start, str_start_mut
 };
 use crate::{
-    Global, Integer, QuarterWord, StrNum, eqtb, eqtb_mut, hash, hash_mut,
+    Global, Integer, QuarterWord, StrNum, hash, hash_mut,
     str_pool, str_pool_mut
 };
 
@@ -223,7 +223,7 @@ impl Global {
             // done1:
             dump_int!(l - k);
             while k < l {
-                dump_wd!(eqtb![k as usize]);
+                dump_wd!(eqtb(k as usize));
                 k += 1;
             }
             k = j + 1;
@@ -240,7 +240,7 @@ impl Global {
             let mut j = k;
             let mut found2 = false;
             while j < EQTB_SIZE {
-                if eqtb![j as usize].int() == eqtb![(j + 1) as usize].int() {
+                if eqtb(j as usize).int() == eqtb((j + 1) as usize).int() {
                     found2 = true;
                     break;
                 }
@@ -250,7 +250,7 @@ impl Global {
                 j += 1;
                 let l = j;
                 while j < EQTB_SIZE {
-                    if eqtb![j as usize].int() != eqtb![(j + 1) as usize].int() {
+                    if eqtb(j as usize).int() != eqtb((j + 1) as usize).int() {
                         break; // Goto done2
                     }
                     j += 1;
@@ -264,7 +264,7 @@ impl Global {
             // done2:
             dump_int!(l - k);
             while k < l {
-                dump_wd!(eqtb![k as usize]);
+                dump_wd!(eqtb(k as usize));
                 k += 1;
             }
             k = j + 1;
@@ -555,7 +555,7 @@ impl Global {
                     break 'load_fmt false;
                 }
                 for j in k..(k + x) {
-                    *eqtb_mut![j as usize] = undump_wd!();
+                    *eqtb_mut(j as usize) = undump_wd!();
                 }
                 k += x;
                 x = undump_int!();
@@ -563,7 +563,7 @@ impl Global {
                     break 'load_fmt false;
                 }
                 for j in k..(k + x) {
-                    *eqtb_mut![j as usize] = eqtb![(k - 1) as usize];
+                    *eqtb_mut(j as usize) = eqtb((k - 1) as usize);
                 }
                 k += x;
 

@@ -1,12 +1,12 @@
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, XEQ_LEVEL, MemoryWord, eq_level, eq_level_mut, eq_type_mut,
+    eqtb, eqtb_mut, XEQ_LEVEL, MemoryWord, eq_level, eq_level_mut, eq_type_mut,
     equiv_mut, info, info_mut, link, token_ref_count_mut, tracing_macros
 };
 use crate::error::{TeXError, TeXResult};
 use crate::io::AlphaFileIn;
 use crate::{
-    Global, HalfWord, Integer, QuarterWord, add_token_ref, eqtb, eqtb_mut
+    Global, HalfWord, Integer, QuarterWord, add_token_ref
 };
 
 use std::ops::{Index, IndexMut};
@@ -138,7 +138,7 @@ impl Global {
             *self.save_type_mut(self.save_ptr) = RESTORE_ZERO;
         }
         else {
-            self.save_stack[self.save_ptr] = eqtb![p as usize];
+            self.save_stack[self.save_ptr] = eqtb(p as usize);
             self.save_ptr += 1;
             *self.save_type_mut(self.save_ptr) = RESTOVE_OLD_VALUE;
         }
@@ -151,7 +151,7 @@ impl Global {
     // Section 277
     pub(crate) fn eq_define(&mut self, p: HalfWord, t: QuarterWord, e: HalfWord) -> TeXResult<()> {
         if eq_level(p) == self.cur_level {
-            self.eq_destroy(eqtb![p as usize])?;
+            self.eq_destroy(eqtb(p as usize))?;
         }
         else if self.cur_level > LEVEL_ONE {
             self.eq_save(p, eq_level(p))?;
@@ -168,13 +168,13 @@ impl Global {
             self.eq_save(p, unsafe { XEQ_LEVEL[p as usize] })?;
             unsafe { XEQ_LEVEL[p as usize] = self.cur_level; }
         }
-        *eqtb_mut![p as usize].int_mut() = w;
+        *eqtb_mut(p as usize).int_mut() = w;
         Ok(())
     }
 
     // Section 279
     pub(crate) fn geq_define(&mut self, p: HalfWord, t: QuarterWord, e: HalfWord) -> TeXResult<()> {
-        self.eq_destroy(eqtb![p as usize])?;
+        self.eq_destroy(eqtb(p as usize))?;
         *eq_level_mut(p) = LEVEL_ONE;
         *eq_type_mut(p) = t;
         *equiv_mut(p) = e;
@@ -183,7 +183,7 @@ impl Global {
 }
 
 pub(crate) fn geq_word_define(p: HalfWord, w: Integer) {
-    *eqtb_mut![p as usize].int_mut() = w;
+    *eqtb_mut(p as usize).int_mut() = w;
     unsafe { XEQ_LEVEL[p as usize] = LEVEL_ONE; }
 }
 
@@ -226,7 +226,7 @@ impl Global {
                         self.save_ptr -= 1;
                     }
                     else {
-                        self.save_stack[self.save_ptr] = eqtb![UNDEFINED_CONTROL_SEQUENCE as usize];
+                        self.save_stack[self.save_ptr] = eqtb(UNDEFINED_CONTROL_SEQUENCE as usize);
                     }
                     // Section 283
                     if p < INT_BASE {
@@ -238,8 +238,8 @@ impl Global {
                             }
                         }
                         else {
-                            self.eq_destroy(eqtb![p as usize])?;
-                            *eqtb_mut![p as usize] = self.save_stack[self.save_ptr];
+                            self.eq_destroy(eqtb(p as usize))?;
+                            *eqtb_mut(p as usize) = self.save_stack[self.save_ptr];
                             #[cfg(feature = "stat")]
                             if tracing_restores() > 0 {
                                 self.restore_trace(p, "restoring");
@@ -247,7 +247,7 @@ impl Global {
                         }
                     }
                     else if unsafe { XEQ_LEVEL[p as usize] } != LEVEL_ONE {
-                        *eqtb_mut![p as usize] = self.save_stack[self.save_ptr];
+                        *eqtb_mut(p as usize) = self.save_stack[self.save_ptr];
                         unsafe { XEQ_LEVEL[p as usize] = l; }
                         #[cfg(feature = "stat")]
                         if tracing_restores() > 0 {

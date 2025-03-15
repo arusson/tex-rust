@@ -3,7 +3,7 @@ use crate::breaker::{
 };
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, HASH, MEM, XEQ_LEVEL, InStateRecord, InputFile, LineStack,
+    eqtb, eqtb_mut, HASH, MEM, XEQ_LEVEL, InStateRecord, InputFile, LineStack,
     ListStateRecord, MemoryWord, Status, box_mut, cat_code_mut, cur_font_mut,
     day_mut, del_code_mut, end_line_char_mut, eq_level_mut, eq_type_mut,
     equiv_mut, escape_char_mut, glue_ref_count_mut, hang_after_mut, info_mut,
@@ -21,7 +21,7 @@ use crate::parser::{TrieOpHash, TrieTaken};
 use crate::strings::str_ptr;
 use crate::{
     Global, HalfWord, Integer, QuarterWord, SmallNumber,
-    eqtb, eqtb_mut, hash, hash_mut, hi, page_depth, update_terminal
+    hash, hash_mut, hi, page_depth, update_terminal
 };
 
 use std::io::Write;
@@ -625,7 +625,7 @@ impl Global {
         *equiv_mut(UNDEFINED_CONTROL_SEQUENCE) = NULL;
         *eq_level_mut(UNDEFINED_CONTROL_SEQUENCE) = LEVEL_ZERO;
         for k in ACTIVE_BASE..UNDEFINED_CONTROL_SEQUENCE {
-            *eqtb_mut![k as usize] = eqtb![UNDEFINED_CONTROL_SEQUENCE as usize];
+            *eqtb_mut(k as usize) = eqtb(UNDEFINED_CONTROL_SEQUENCE as usize);
         }
         // End section 222
 
@@ -634,7 +634,7 @@ impl Global {
         *eq_level_mut(GLUE_BASE) = LEVEL_ONE;
         *eq_type_mut(GLUE_BASE) = GLUE_REF;
         for k in (GLUE_BASE + 1)..LOCAL_BASE {
-            *eqtb_mut![k as usize] = eqtb![GLUE_BASE as usize];
+            *eqtb_mut(k as usize) = eqtb(GLUE_BASE as usize);
         }
         *glue_ref_count_mut(ZERO_GLUE) += LOCAL_BASE - GLUE_BASE;
         // End section 228
@@ -644,25 +644,25 @@ impl Global {
         *eq_type_mut(PAR_SHAPE_LOC) = SHAPE_REF;
         *eq_level_mut(PAR_SHAPE_LOC) = LEVEL_ONE;
         for k in OUTPUT_ROUTINE_LOC..=(TOKS_BASE + 255) {
-            *eqtb_mut![k as usize] = eqtb![UNDEFINED_CONTROL_SEQUENCE as usize];
+            *eqtb_mut(k as usize) = eqtb(UNDEFINED_CONTROL_SEQUENCE as usize);
         }
         *box_mut(0) = NULL;
         *eq_type_mut(BOX_BASE) = BOX_REF;
         *eq_level_mut(BOX_BASE) = LEVEL_ONE;
         for k in (BOX_BASE + 1)..=(BOX_BASE + 255) {
-            *eqtb_mut![k as usize] = eqtb![BOX_BASE as usize];
+            *eqtb_mut(k as usize) = eqtb(BOX_BASE as usize);
         }
         *cur_font_mut() = NULL_FONT;
         *eq_type_mut(CUR_FONT_LOC) = DATA ;
         *eq_level_mut(CUR_FONT_LOC) = LEVEL_ONE;
         for k in MATH_FONT_BASE..=(MATH_FONT_BASE + 47) {
-            *eqtb_mut![k as usize] = eqtb![CUR_FONT_LOC as usize];
+            *eqtb_mut(k as usize) = eqtb(CUR_FONT_LOC as usize);
         }
         *equiv_mut(CAT_CODE_BASE) = 0;
         *eq_type_mut(CAT_CODE_BASE) = DATA;
         *eq_level_mut(CAT_CODE_BASE) = LEVEL_ONE;
         for k in (CAT_CODE_BASE + 1)..INT_BASE {
-            *eqtb_mut![k as usize] = eqtb![CAT_CODE_BASE as usize];
+            *eqtb_mut(k as usize) = eqtb(CAT_CODE_BASE as usize);
         }
         for k in 0..=255 {
             *cat_code_mut(k) = OTHER_CHAR as HalfWord;
@@ -693,7 +693,7 @@ impl Global {
 
         // Section 240
         for k in INT_BASE..DEL_CODE_BASE {
-            *eqtb_mut![k as usize].int_mut() = 0;
+            *eqtb_mut(k as usize).int_mut() = 0;
         }
         *mag_mut() = 1000;
         *tolerance_mut() = 10000;
@@ -709,7 +709,7 @@ impl Global {
 
         // Section 250
         for k in DIMEN_BASE..=EQTB_SIZE {
-            *eqtb_mut![k as usize].sc_mut() = 0;
+            *eqtb_mut(k as usize).sc_mut() = 0;
         }
         // End section 250
 
@@ -1167,7 +1167,7 @@ impl Global {
         self.primitive(b"endcsname", END_CS_NAME, 0)?;
         self.primitive(b"endgroup", END_GROUP, 0)?;
         *text_mut(FROZEN_END_GROUP) = (str_ptr() - 1) as HalfWord; // "endgroup"
-        *eqtb_mut![FROZEN_END_GROUP as usize] = eqtb![self.cur_val as usize];
+        *eqtb_mut(FROZEN_END_GROUP as usize) = eqtb(self.cur_val as usize);
 
         self.primitive(b"expandafter", EXPAND_AFTER, 0)?;
         self.primitive(b"font", DEF_FONT, 0)?;
@@ -1193,7 +1193,7 @@ impl Global {
         self.primitive(b"read", READ_TO_CS, 0)?;
         self.primitive(b"relax", RELAX, 256)?;
         *text_mut(FROZEN_RELAX) = (str_ptr() - 1) as HalfWord; // "relax"
-        *eqtb_mut![FROZEN_RELAX as usize] = eqtb![self.cur_val as usize];
+        *eqtb_mut(FROZEN_RELAX as usize) = eqtb(self.cur_val as usize);
 
         self.primitive(b"setbox", SET_BOX, 0)?;
         self.primitive(b"the", THE, 0)?;
@@ -1269,27 +1269,27 @@ impl Global {
         // Section 491
         self.primitive(b"fi", FI_OR_ELSE, FI_CODE)?;
         *text_mut(FROZEN_FI) = (str_ptr() - 1) as HalfWord; // "fi"
-        *eqtb_mut![FROZEN_FI as usize] = eqtb![self.cur_val as usize];
+        *eqtb_mut(FROZEN_FI as usize) = eqtb(self.cur_val as usize);
         self.primitive(b"or", FI_OR_ELSE, OR_CODE)?;
         self.primitive(b"else", FI_OR_ELSE, ELSE_CODE)?;
 
         // Section 553
         self.primitive(b"nullfont", SET_FONT, NULL_FONT)?;
         *text_mut(FROZEN_NULL_FONT) = (str_ptr() - 1) as HalfWord; // "nullfont"
-        *eqtb_mut![FROZEN_NULL_FONT as usize] = eqtb![self.cur_val as usize];
+        *eqtb_mut(FROZEN_NULL_FONT as usize) = eqtb(self.cur_val as usize);
 
         // Section 780
         self.primitive(b"span", TAB_MARK, SPAN_CODE)?;
         self.primitive(b"cr", CAR_RET, CR_CODE)?;
         *text_mut(FROZEN_CR) = (str_ptr() - 1) as HalfWord; // "cr"
-        *eqtb_mut![FROZEN_CR as usize] = eqtb![self.cur_val as usize];
+        *eqtb_mut(FROZEN_CR as usize) = eqtb(self.cur_val as usize);
         self.primitive(b"crcr", CAR_RET, CR_CR_CODE)?;
         *text_mut(FROZEN_END_TEMPLATE) = ENDTEMPLATE_STRING as HalfWord;
         *text_mut(FROZEN_ENDV) = ENDTEMPLATE_STRING as HalfWord;
         *eq_type_mut(FROZEN_ENDV) = ENDV;
         *equiv_mut(FROZEN_ENDV) = NULL_LIST;
         *eq_level_mut(FROZEN_ENDV) = LEVEL_ONE;
-        *eqtb_mut![FROZEN_END_TEMPLATE as usize] = eqtb![FROZEN_ENDV as usize];
+        *eqtb_mut(FROZEN_END_TEMPLATE as usize) = eqtb(FROZEN_ENDV as usize);
         *eq_type_mut(FROZEN_END_TEMPLATE) = END_TEMPLATE;
 
         // Section 983
@@ -1393,7 +1393,7 @@ impl Global {
         self.primitive(b"left", LEFT_RIGHT, LEFT_NOAD as HalfWord)?;
         self.primitive(b"right", LEFT_RIGHT, RIGHT_NOAD as HalfWord)?;
         *text_mut(FROZEN_RIGHT) = (str_ptr() - 1) as HalfWord; // "right"
-        *eqtb_mut![FROZEN_RIGHT as usize] = eqtb![self.cur_val as usize];
+        *eqtb_mut(FROZEN_RIGHT as usize) = eqtb(self.cur_val as usize);
 
         // Section 1208
         self.primitive(b"long", PREFIX, 1)?;

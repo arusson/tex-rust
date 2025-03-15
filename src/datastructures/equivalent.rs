@@ -23,18 +23,12 @@ impl IndexMut<usize> for Eqtb {
     }
 }
 
-#[macro_export]
-macro_rules! eqtb {
-    ($p:expr) => [
-        unsafe { EQTB[$p] }
-    ];
+pub(crate) fn eqtb(p: usize) -> MemoryWord {
+    unsafe { EQTB[p] }
 }
 
-#[macro_export]
-macro_rules! eqtb_mut {
-    ($p:expr) => [
-        unsafe { &mut EQTB[$p] }
-    ];
+pub(crate) fn eqtb_mut(p: usize) -> &'static mut MemoryWord {
+    unsafe { &mut EQTB[p] }
 }
 
 pub(crate) struct XeqLevel([QuarterWord; (EQTB_SIZE - INT_BASE + 1) as usize]);
@@ -167,7 +161,7 @@ macro_rules! section_247_dimen_par_mut {
 
 // Section 221
 pub(crate) fn eq_level(p: HalfWord) -> QuarterWord {
-    eqtb![p as usize].eq_level_field()
+    eqtb(p as usize).eq_level_field()
 }
 
 pub(crate) fn eq_level_mut(p: HalfWord) -> &'static mut QuarterWord {
@@ -175,7 +169,7 @@ pub(crate) fn eq_level_mut(p: HalfWord) -> &'static mut QuarterWord {
 }
 
 pub(crate) fn eq_type(p: HalfWord) -> QuarterWord {
-    eqtb![p as usize].eq_type_field()
+    eqtb(p as usize).eq_type_field()
 }
 
 pub(crate) fn eq_type_mut(p: HalfWord) -> &'static mut QuarterWord {
@@ -183,7 +177,7 @@ pub(crate) fn eq_type_mut(p: HalfWord) -> &'static mut QuarterWord {
 }
 
 pub(crate) fn equiv(p: HalfWord) -> HalfWord {
-    eqtb![p as usize].equiv_field()
+    eqtb(p as usize).equiv_field()
 }
 
 pub(crate) fn equiv_mut(p: HalfWord) -> &'static mut HalfWord {
@@ -243,23 +237,23 @@ section_230_equiv_var_mut!(math_code_mut, MATH_CODE_BASE);
 
 // Section 236
 pub(crate) fn del_code(p: HalfWord) -> Integer {
-    eqtb![(DEL_CODE_BASE + p) as usize].int()
+    eqtb((DEL_CODE_BASE + p) as usize).int()
 }
 
 pub(crate) fn del_code_mut(p: HalfWord) -> &'static mut Integer {
-    eqtb_mut![(DEL_CODE_BASE + p) as usize].int_mut()
+    eqtb_mut((DEL_CODE_BASE + p) as usize).int_mut()
 }
 
 pub(crate) fn count(p: HalfWord) -> Integer {
-    eqtb![(COUNT_BASE + p) as usize].int()
+    eqtb((COUNT_BASE + p) as usize).int()
 }
 
 fn int_par(p: HalfWord) -> Integer {
-    eqtb![(INT_BASE + p) as usize].int()
+    eqtb((INT_BASE + p) as usize).int()
 }
 
 fn int_par_mut(p: HalfWord) -> &'static mut Integer {
-    eqtb_mut![(INT_BASE + p) as usize].int_mut()
+    eqtb_mut((INT_BASE + p) as usize).int_mut()
 }
 
 section_236_int_par!(pretolerance, PRETOLERANCE_CODE);
@@ -337,15 +331,15 @@ section_236_int_par_mut!(new_line_char_mut, NEW_LINE_CHAR_CODE);
 
 // Section 247
 pub(crate) fn dimen(p: HalfWord) -> Scaled {
-    eqtb![(SCALED_BASE + p) as usize].sc()
+    eqtb((SCALED_BASE + p) as usize).sc()
 }
 
 fn dimen_par(p: HalfWord) -> Scaled {
-    eqtb![(DIMEN_BASE + p) as usize].sc()
+    eqtb((DIMEN_BASE + p) as usize).sc()
 }
 
 fn dimen_par_mut(p: HalfWord) -> &'static mut Scaled {
-    eqtb_mut![(DIMEN_BASE + p) as usize].sc_mut()
+    eqtb_mut((DIMEN_BASE + p) as usize).sc_mut()
 }
 
 section_247_dimen_par!(par_indent, PAR_INDENT_CODE);

@@ -3,7 +3,7 @@ use crate::arithmetic::{
 };
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, mem_mut, r#box, equiv, equiv_mut, font_id_text_mut, geq_word_define,
+    eqtb, eqtb_mut, mem_mut, r#box, equiv, equiv_mut, font_id_text_mut, geq_word_define,
     global_defs, glue_ref_count_mut, info, info_mut, link, link_mut,
     shrink, shrink_mut, shrink_order, shrink_order_mut, stretch,
     stretch_mut, stretch_order, stretch_order_mut, text, token_ref_count_mut,
@@ -16,9 +16,8 @@ use crate::strings::{
 };
 use crate::{
     Global, HalfWord, Integer, QuarterWord, SmallNumber, StrNum,
-    add_glue_ref, add_token_ref, back_list, eqtb, eqtb_mut,
-    free_avail, hi, mult_integers, nx_plus_y, odd,
-    sec404_get_next_nonblank_nonrelax_noncall_token, update_terminal
+    add_glue_ref, add_token_ref, back_list, free_avail, hi, mult_integers, nx_plus_y,
+    odd, sec404_get_next_nonblank_nonrelax_noncall_token, update_terminal
 };
 use std::io::Write;
 
@@ -539,7 +538,7 @@ impl Global {
                     self.scan_dimen(false, false, false)?;
                 }
                 if q == ADVANCE {
-                    self.cur_val += eqtb![l as usize].int()
+                    self.cur_val += eqtb(l as usize).int()
                 }
             }
             else {
@@ -582,14 +581,14 @@ impl Global {
             self.cur_val = if p < GLUE_VAL {
                 if q == MULTIPLY {
                     if p == INT_VAL {
-                        mult_integers!(eqtb![l as usize].int(), self.cur_val)
+                        mult_integers!(eqtb(l as usize).int(), self.cur_val)
                     }
                     else {
-                        nx_plus_y!(eqtb![l as usize].int(), self.cur_val, 0)
+                        nx_plus_y!(eqtb(l as usize).int(), self.cur_val, 0)
                     }
                 }
                 else {
-                    x_over_n(eqtb![l as usize].int(), self.cur_val)?.0
+                    x_over_n(eqtb(l as usize).int(), self.cur_val)?.0
                 }
             }
             else {
@@ -803,7 +802,7 @@ impl Global {
     
         // common_ending:
         *equiv_mut(u) = f as HalfWord;
-        *eqtb_mut![FONT_ID_BASE as usize + f] = eqtb![u as usize];
+        *eqtb_mut(FONT_ID_BASE as usize + f) = eqtb(u as usize);
         *font_id_text_mut(f as QuarterWord) = t;
         Ok(())
     }

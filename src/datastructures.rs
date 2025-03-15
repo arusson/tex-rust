@@ -7,7 +7,7 @@ mod stack;
 
 pub use equivalent::end_line_char;
 pub(crate) use equivalent::{
-    EQTB, XEQ_LEVEL, eq_level, eq_type, equiv, count, glue_par,
+    eqtb, eqtb_mut, XEQ_LEVEL, eq_level, eq_type, equiv, count, glue_par,
     new_line_char, new_line_char_mut, escape_char,
     show_box_breadth, show_box_depth, error_context_lines,
     year, month, day, time,

@@ -1,7 +1,7 @@
 use crate::arithmetic::{mult_and_add, xn_over_d};
 use crate::constants::*;
 use crate::datastructures::{
-    EQTB, mem, count, cur_font, depth_mut, dimen, equiv, glue_ptr,
+    eqtb, mem, count, cur_font, depth_mut, dimen, equiv, glue_ptr,
     glue_ref_count_mut, height_mut, info, info_mut, link, link_mut, mag,
     math_code, mu_skip, par_shape_ptr, penalty, r#box, r#type, shrink,
     shrink_mut, shrink_order_mut, skip, stretch, stretch_mut,
@@ -10,7 +10,7 @@ use crate::datastructures::{
 use crate::error::{TeXError, TeXResult};
 use crate::{
     Global, HalfWord, Integer, QuarterWord, Scaled, SmallNumber,
-    add_glue_ref, back_list, eqtb, free_avail, ho, nx_plus_y
+    add_glue_ref, back_list, free_avail, ho, nx_plus_y
 };
 
 use std::cmp::Ordering::{Equal, Greater, Less};
@@ -116,7 +116,7 @@ impl Global {
                 match m.cmp(&MATH_CODE_BASE) {
                     Equal => scanned_result!(self, ho!(math_code(self.cur_val)), INT_VAL),
                     Less => scanned_result!(self, equiv(m + self.cur_val), INT_VAL),
-                    Greater => scanned_result!(self, eqtb![(m + self.cur_val) as usize].int(), INT_VAL)
+                    Greater => scanned_result!(self, eqtb((m + self.cur_val) as usize).int(), INT_VAL)
                 }
                 // End section 414
             },
@@ -145,9 +145,9 @@ impl Global {
                 // End section 415
             },
 
-            ASSIGN_INT => scanned_result!(self, eqtb![m as usize].int(), INT_VAL),
+            ASSIGN_INT => scanned_result!(self, eqtb(m as usize).int(), INT_VAL),
 
-            ASSIGN_DIMEN => scanned_result!(self, eqtb![m as usize].sc(), DIMEN_VAL),
+            ASSIGN_DIMEN => scanned_result!(self, eqtb(m as usize).sc(), DIMEN_VAL),
 
             ASSIGN_GLUE => scanned_result!(self, equiv(m), GLUE_VAL),
 
